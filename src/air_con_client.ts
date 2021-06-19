@@ -1,12 +1,12 @@
 import * as child from 'child_process';
 
 export default class AirConClient {
-  private static readonly device = "ac"; // TODO: make variable
+  private static readonly device = "SharpAcRaw"; // TODO: make variable
 
-  public static MIN_COOL_VALUE = 19;
-  public static MAX_COOL_VALUE = 23;
-  public static MIN_HEAT_VALUE = 23;
-  public static MAX_HEAT_VALUE = 23;
+  public static MIN_COOL_VALUE = 18;
+  public static MAX_COOL_VALUE = 32;
+  public static MIN_HEAT_VALUE = 18;
+  public static MAX_HEAT_VALUE = 32;
 
   public static changeTemp(mode: number, temperature: number) {
     if (mode == 1) {
@@ -18,7 +18,7 @@ export default class AirConClient {
   }
 
   public static powerOff() {
-    this.sendEvent(this.device, `OFF`);
+    this.sendEvent(this.device, `key_off`);
     return true;
   }
 
