@@ -10,9 +10,9 @@ export default class AirConClient {
 
   public static changeTemp(mode: number, temperature: number) {
     if (mode == 1) {
-      this.sendEvent(this.device, `HEAT_${temperature}_MED`);
+      this.sendEvent(this.device, `key_on_heat_aTmpNorm_speedA_${temperature}`);
     } else if (mode == 2) {
-      this.sendEvent(this.device, `COOL_${temperature}_MED`);
+      this.sendEvent(this.device, `key_on_cool_aTmpNorm_speedA_${temperature}`);
     }
     return temperature;
   }
