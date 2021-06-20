@@ -23,8 +23,28 @@ export default class AirConClient {
     if (mode == 1) {
       this.sendEvent(this.device, prestring+`heat_aTmpNorm_speed${speedresult}_${temperature}`+poststring, logs);
     } else if (mode == 2) {
-      //logs.info("testcool1");
       this.sendEvent(this.device, prestring+`cool_aTmpNorm_speed${speedresult}_${temperature}`+poststring, logs);
+    } else if (mode == 3) {
+      let atempVal = "Norm";
+      if (!Number.isInteger(temperature)) {
+        let str = temperature as unknown as string;
+        let arrstr = str.split(".",1);
+        let heat = arrstr[0] as unknown as number;
+        let cool = arrstr[1] as unknown as number;
+        let mid = heat + cool / 2;
+        if (mid < 20.8) {
+          atempVal = "Cold2"; }
+          else if (mid < 23.6) {
+          atempVal = "Cold1"; }
+          else if (mid < 26.4) {
+          atempVal = "Norm"; }
+          else if (mid < 29.2) {
+          atempVal = "Hot1"; }
+          else if (mid <= 32) {
+          atempVal = "hot2"; }
+      }
+
+      this.sendEvent(this.device, prestring+`auto_aTmp${atempVal}_speed${speedresult}_0`+poststring, logs);
     }
     return temperature;
   }
