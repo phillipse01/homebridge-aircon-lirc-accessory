@@ -128,7 +128,15 @@ class AirConLircAccessory implements AccessoryPlugin {
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         log.info("HeatingThresholdTemperature SET: " + (value as number));
         //this.currentStatus = hap.Characteristic.TargetHeaterCoolerState.HEAT;
-        this.currentTemperatureHeat = (value as number);
+        
+        // Auto mode reverses things
+        if (this.currentStatus == hap.Characteristic.TargetHeaterCoolerState.AUTO) {
+          this.currentTemperatureCool = (value as number);
+          log.info("autonum "+this.getRelevantTemp(this.currentStatus));
+        } else {
+          this.currentTemperatureHeat = (value as number);
+        }
+
         this.setAirconSettings(this.currentStatus, this.getRelevantTemp(this.currentStatus), this.currentSpeed, this.currentSwing);
         callback();
       })
@@ -147,7 +155,15 @@ class AirConLircAccessory implements AccessoryPlugin {
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         log.info("CoolingThresholdTemperature SET: " + (value as number));
         //this.currentStatus = hap.Characteristic.TargetHeaterCoolerState.COOL;
-        this.currentTemperatureCool = (value as number);
+        
+        // Auto mode reverses things
+        if (this.currentStatus == hap.Characteristic.TargetHeaterCoolerState.AUTO) {
+          this.currentTemperatureHeat = (value as number);
+          log.info("autonum "+this.getRelevantTemp(this.currentStatus));
+        } else {
+          this.currentTemperatureCool = (value as number);
+        }
+
         this.setAirconSettings(this.currentStatus, this.getRelevantTemp(this.currentStatus), this.currentSpeed, this.currentSwing);
         callback();
       })
@@ -214,8 +230,7 @@ class AirConLircAccessory implements AccessoryPlugin {
         return this.currentTemperatureHeat;
         break;
       case hap.Characteristic.TargetHeaterCoolerState.AUTO:
-        // auto mode switches things up cool and heat values
-        return ((this.currentTemperatureCool + "." + this.currentTemperatureHeat) as unknown) as number;
+        return ((this.currentTemperatureHeat + "." + this.currentTemperatureCool) as unknown) as number;
         break;
     }
     return this.currentTemperatureCool;

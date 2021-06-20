@@ -27,10 +27,13 @@ export default class AirConClient {
     } else if (mode == 0) {
       let atempVal = "Norm";
       if (!Number.isInteger(temperature)) {
+        logs.info("temp "+temperature);
         let str = temperature as unknown as string;
-        let arrstr = str.split(".",1);
+        logs.info("str "+str);
+        let arrstr = str.split(".",2);
         let heat = arrstr[0] as unknown as number;
         let cool = arrstr[1] as unknown as number;
+        logs.info("heat "+heat+" cool "+cool);
         let mid = (heat + cool) / 2;
         logs.info("num "+mid);
         if (mid < 20.8) {
