@@ -12,13 +12,17 @@ export default class AirConClient {
   public static MAX_HEAT_VALUE = 32;
 
   public static MIN_SPEED_VALUE = 0;
-  public static MAX_SPEED_VALUE = 3;
+  public static MAX_SPEED_VALUE = 4;
 
-  public static changeTemp(mode: number, temperature: number, logs: Logging) {
+  public static changeSettings(mode: number, temperature: number, speed: number, swing: boolean, logs: Logging) {
+    const prestring = swing ? "key_upd" : "key_on";
+    const poststring = swing ? "_swing" : "";
+    const speedresult = speed == 1 ? "A" : speed - 1;
+
     if (mode == 1) {
-      this.sendEvent(this.device, `HEAT_${temperature}_MED`, logs);
+      this.sendEvent(this.device, prestring+`heat_aTmpNorm_speed${speedresult}_${temperature}`+poststring, logs);
     } else if (mode == 2) {
-      this.sendEvent(this.device, `COOL_${temperature}_MED`, logs);
+      this.sendEvent(this.device, prestring+`cool_aTmpNorm_speed${speedresult}_${temperature}`+poststring, logs);
     }
     return temperature;
   }
