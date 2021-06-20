@@ -127,7 +127,6 @@ class AirConLircAccessory implements AccessoryPlugin {
       })
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         log.info("HeatingThresholdTemperature SET: " + (value as number));
-        //this.currentStatus = hap.Characteristic.TargetHeaterCoolerState.HEAT;
         
         // Auto mode reverses things
         if (this.currentStatus == hap.Characteristic.TargetHeaterCoolerState.AUTO) {
@@ -154,7 +153,6 @@ class AirConLircAccessory implements AccessoryPlugin {
       })
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         log.info("CoolingThresholdTemperature SET: " + (value as number));
-        //this.currentStatus = hap.Characteristic.TargetHeaterCoolerState.COOL;
         
         // Auto mode reverses things
         if (this.currentStatus == hap.Characteristic.TargetHeaterCoolerState.AUTO) {
