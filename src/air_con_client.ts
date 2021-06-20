@@ -34,7 +34,7 @@ export default class AirConClient {
         let heat = arrstr[0] as unknown as number;
         let cool = arrstr[1] as unknown as number;
         logs.info("heat "+heat+" cool "+cool);
-        let mid = (heat + cool) / 2;
+        let mid = (+heat + +cool) / 2;
         logs.info("num "+mid);
         if (mid < 20.8) {
           atempVal = "Cold2"; }
