@@ -11,25 +11,25 @@ export default class AirConClient {
   public static MIN_HEAT_VALUE = 18;
   public static MAX_HEAT_VALUE = 32;
 
-  public static changeTemp(mode: number, temperature: number) {
+  public static changeTemp(mode: number, temperature: number, logs: Logging) {
     if (mode == 1) {
-      this.sendEvent(this.device, `HEAT_${temperature}_MED`);
+      this.sendEvent(this.device, `HEAT_${temperature}_MED`, logs);
     } else if (mode == 2) {
-      this.sendEvent(this.device, `COOL_${temperature}_MED`);
+      this.sendEvent(this.device, `COOL_${temperature}_MED`, logs);
     }
     return temperature;
   }
 
-  public static powerOff() {
-    this.sendEvent(this.device, `key_off`);
+  public static powerOff(logs :Logging) {
+    this.sendEvent(this.device, `key_off`, logs);
     return true;
   }
 
-  private static sendEvent(device: string, command: string) {
+  private static sendEvent(device: string, command: string, loga: Logging) {
     for (var i = 0; i < 3; i++) {
       // Send the event multiple times just in case the receiver didn't get it
       // child.exec(`irsend SEND_ONCE ${device} ${command}`);
-      AirConClient.loga.info('Exec: ${device} ${command}');
+      loga.info('Exec: ${device} ${command}');
     }
   }
 }

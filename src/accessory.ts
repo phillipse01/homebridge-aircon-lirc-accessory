@@ -54,6 +54,7 @@ class AirConLircAccessory implements AccessoryPlugin {
   private active = false;
   private currentStatus = hap.Characteristic.TargetHeaterCoolerState.HEAT;
   private currentTemperature = 23;
+  private currentSwing = false;
 
   private readonly switchService: Service;
   private readonly informationService: Service;
@@ -70,9 +71,9 @@ class AirConLircAccessory implements AccessoryPlugin {
       })
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         if (this.active = value as boolean) {
-          AirConClient.changeTemp(this.currentStatus, this.currentTemperature);
+          AirConClient.changeTemp(this.currentStatus, this.currentTemperature, log);
         }else {
-          AirConClient.powerOff();
+          AirConClient.powerOff(log);
         }
         log.info("Active SET: " + (this.active ? "ON" : "OFF"));
 
@@ -147,6 +148,20 @@ class AirConLircAccessory implements AccessoryPlugin {
         minStep: 1,
       });;
 
+      // swing
+      this.switchService.getCharacteristic(hap.Characteristic.SwingMode)
+      .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
+        log.info("SwingMode GET: " + this.currentSwing);
+        callback(undefined, this.currentSwing);
+      })
+      .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
+        log.info("SwingMode SET: " + (value as number));
+        this.currentSwing = true;
+        //this.currentTemperature = this.setTemperature(hap.Characteristic.TargetHeaterCoolerState.HEAT, value as number);
+        callback();
+      })
+
+
     this.informationService = new hap.Service.AccessoryInformation()
       .setCharacteristic(hap.Characteristic.Manufacturer, "AirConLircAccesoryManufacturer")
       .setCharacteristic(hap.Characteristic.Model, "AirConLircAccesoryModel");
@@ -158,12 +173,12 @@ class AirConLircAccessory implements AccessoryPlugin {
     switch (mode) {
       case hap.Characteristic.TargetHeaterCoolerState.COOL:
         if (temperature < AirConClient.MIN_COOL_VALUE || temperature > AirConClient.MAX_COOL_VALUE) {
-          return AirConClient.changeTemp(mode, AirConClient.MIN_COOL_VALUE);
+          return AirConClient.changeTemp(mode, AirConClient.MIN_COOL_VALUE,this.log);
         }
         break;
       case hap.Characteristic.TargetHeaterCoolerState.HEAT:
         if (temperature < AirConClient.MAX_HEAT_VALUE || temperature > AirConClient.MAX_HEAT_VALUE) {
-          return AirConClient.changeTemp(mode, AirConClient.MIN_COOL_VALUE);
+          return AirConClient.changeTemp(mode, AirConClient.MIN_COOL_VALUE,this.log);
         }
         break;
       default:
