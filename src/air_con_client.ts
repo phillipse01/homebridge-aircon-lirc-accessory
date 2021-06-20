@@ -11,6 +11,9 @@ export default class AirConClient {
   public static MIN_HEAT_VALUE = 18;
   public static MAX_HEAT_VALUE = 32;
 
+  public static MIN_SPEED_VALUE = 0;
+  public static MAX_SPEED_VALUE = 3;
+
   public static changeTemp(mode: number, temperature: number, logs: Logging) {
     if (mode == 1) {
       this.sendEvent(this.device, `HEAT_${temperature}_MED`, logs);
@@ -26,10 +29,7 @@ export default class AirConClient {
   }
 
   private static sendEvent(device: string, command: string, loga: Logging) {
-    for (var i = 0; i < 3; i++) {
-      // Send the event multiple times just in case the receiver didn't get it
-      // child.exec(`irsend SEND_ONCE ${device} ${command}`);
-      loga.info("Exec: " + command);
-    }
+    // child.exec(`irsend SEND_ONCE ${device} ${command}`);
+    loga.info("Exec: " + command);
   }
 }

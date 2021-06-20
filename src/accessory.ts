@@ -54,6 +54,7 @@ class AirConLircAccessory implements AccessoryPlugin {
   private active = false;
   private currentStatus = hap.Characteristic.TargetHeaterCoolerState.HEAT;
   private currentTemperature = 23;
+  private currentSpeed = 1;
   private currentSwing = false;
 
   private readonly switchService: Service;
@@ -93,15 +94,10 @@ class AirConLircAccessory implements AccessoryPlugin {
       })
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         log.info("CurrentHeaterCoolerState SET: " + (value as number));
-        if (value != hap.Characteristic.TargetHeaterCoolerState.AUTO) {
-          this.currentStatus = value as number;
-        }
+        this.currentStatus = value as number;
         this.setTemperature(value, this.currentTemperature);
         callback();
-      })
-      .setProps({
-        minValue: 1 // Disable AUTO mode
-      });;
+      });
 
     this.switchService.getCharacteristic(hap.Characteristic.CurrentTemperature)
       .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
@@ -161,6 +157,23 @@ class AirConLircAccessory implements AccessoryPlugin {
         callback();
       })
 
+      //speed of fan
+      this.switchService.getCharacteristic(hap.Characteristic.RotationSpeed)
+      .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
+        log.info("RotationSpeed GET: " + this.currentSpeed);
+        callback(undefined, this.currentSpeed);
+      })
+      .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
+        log.info("RotationSpeed SET: " + (value as number));
+        //this.currentTemperature = this.setTemperature(hap.Characteristic.TargetHeaterCoolerState.COOL, value as number);
+        callback();
+      })
+      .setProps({
+        minValue: AirConClient.MIN_SPEED_VALUE,
+        maxValue: AirConClient.MAX_SPEED_VALUE,
+        minStep: 1,
+      });;
+
 
     this.informationService = new hap.Service.AccessoryInformation()
       .setCharacteristic(hap.Characteristic.Manufacturer, "AirConLircAccesoryManufacturer")
@@ -173,12 +186,12 @@ class AirConLircAccessory implements AccessoryPlugin {
     switch (mode) {
       case hap.Characteristic.TargetHeaterCoolerState.COOL:
         if (temperature < AirConClient.MIN_COOL_VALUE || temperature > AirConClient.MAX_COOL_VALUE) {
-          return AirConClient.changeTemp(mode, AirConClient.MIN_COOL_VALUE,this.log);
+          return AirConClient.changeTemp(mode, temperature,this.log);
         }
         break;
       case hap.Characteristic.TargetHeaterCoolerState.HEAT:
         if (temperature < AirConClient.MAX_HEAT_VALUE || temperature > AirConClient.MAX_HEAT_VALUE) {
-          return AirConClient.changeTemp(mode, AirConClient.MIN_COOL_VALUE,this.log);
+          return AirConClient.changeTemp(mode, temperature,this.log);
         }
         break;
       default:
