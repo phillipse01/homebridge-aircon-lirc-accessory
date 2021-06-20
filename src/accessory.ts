@@ -127,8 +127,15 @@ class AirConLircAccessory implements AccessoryPlugin {
       })
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         log.info("HeatingThresholdTemperature SET: " + (value as number));
-        this.currentStatus = hap.Characteristic.TargetHeaterCoolerState.HEAT;
-        this.currentTemperatureHeat = (value as number);
+        //this.currentStatus = hap.Characteristic.TargetHeaterCoolerState.HEAT;
+
+        // Auto mode reverses things
+        if (hap.Characteristic.TargetHeaterCoolerState.AUTO) {
+          this.currentTemperatureCool = (value as number);
+        } else {
+          this.currentTemperatureHeat = (value as number);
+        }
+        
         this.setAirconSettings(this.currentStatus, this.getRelevantTemp(this.currentStatus), this.currentSpeed, this.currentSwing);
         callback();
       })
@@ -146,8 +153,16 @@ class AirConLircAccessory implements AccessoryPlugin {
       })
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         log.info("CoolingThresholdTemperature SET: " + (value as number));
-        this.currentStatus = hap.Characteristic.TargetHeaterCoolerState.COOL;
-        this.currentTemperatureCool = (value as number);
+        //this.currentStatus = hap.Characteristic.TargetHeaterCoolerState.COOL;
+        
+        // Auto mode reverses things
+        if (hap.Characteristic.TargetHeaterCoolerState.AUTO) {
+          this.currentTemperatureHeat = (value as number);
+          log.info("autonum "+this.getRelevantTemp(this.currentStatus));
+        } else {
+          this.currentTemperatureCool = (value as number);
+        }
+
         this.setAirconSettings(this.currentStatus, this.getRelevantTemp(this.currentStatus), this.currentSpeed, this.currentSwing);
         callback();
       })
