@@ -65,6 +65,8 @@ class AirConLircAccessory implements AccessoryPlugin {
     this.name = config.name;
 
     this.switchService = new hap.Service.HeaterCooler(this.name);
+
+    // turn on and off
     this.switchService.getCharacteristic(hap.Characteristic.Active)
       .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         log.info("Active GET: " + (this.active? "ON": "OFF"));
@@ -81,12 +83,14 @@ class AirConLircAccessory implements AccessoryPlugin {
         callback();
       });
 
+    // whats my current mode
     this.switchService.getCharacteristic(hap.Characteristic.CurrentHeaterCoolerState)
       .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         log.info("CurrentHeaterCoolerState GET: " + (this.currentStatus + 1));
         callback(undefined, this.currentStatus + 1);
       });
 
+    // set mode
     this.switchService.getCharacteristic(hap.Characteristic.TargetHeaterCoolerState)
       .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         log.info("TargetHeaterCoolerState GET: " + (this.currentStatus));
@@ -102,6 +106,7 @@ class AirConLircAccessory implements AccessoryPlugin {
         minValue: 1, //disable auto for now
       });;
 
+    // get current temp
     this.switchService.getCharacteristic(hap.Characteristic.CurrentTemperature)
       .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         const temperature = this.active ? this.currentTemperature : 0;
@@ -109,12 +114,14 @@ class AirConLircAccessory implements AccessoryPlugin {
         callback(undefined, temperature);
       });
 
+    // celcius
     this.switchService.getCharacteristic(hap.Characteristic.TemperatureDisplayUnits)
       .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         log.info("TemperatureDisplayUnits GET: " + hap.Characteristic.TemperatureDisplayUnits.CELSIUS);
         callback(undefined, hap.Characteristic.TemperatureDisplayUnits.CELSIUS);
       });
 
+    // heating temp
     this.switchService.getCharacteristic(hap.Characteristic.HeatingThresholdTemperature)
       .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         log.info("HeatingThresholdTemperature GET: " + this.currentTemperature);
@@ -132,6 +139,7 @@ class AirConLircAccessory implements AccessoryPlugin {
         minStep: 1
       });;
 
+    // cooling temp
     this.switchService.getCharacteristic(hap.Characteristic.CoolingThresholdTemperature)
       .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         log.info("CoolingThresholdTemperature GET: " + this.currentTemperature);
@@ -180,7 +188,7 @@ class AirConLircAccessory implements AccessoryPlugin {
         minStep: 1,
       });;
 
-
+    // info
     this.informationService = new hap.Service.AccessoryInformation()
       .setCharacteristic(hap.Characteristic.Manufacturer, "AirConLircAccesoryManufacturer")
       .setCharacteristic(hap.Characteristic.Model, "AirConLircAccesoryModel");
@@ -189,8 +197,10 @@ class AirConLircAccessory implements AccessoryPlugin {
   }
 
   private setAirconSettings(mode: any, temperature: number , speed: number, swing: boolean): number {
+    this.log.info("testcoolnum "+mode);
     switch (mode) {
       case hap.Characteristic.TargetHeaterCoolerState.COOL:
+        this.log.info("testcoolout");
         if (temperature < AirConClient.MIN_COOL_VALUE || temperature > AirConClient.MAX_COOL_VALUE) {
           this.log.info("testcool");
           return AirConClient.changeSettings(mode, temperature, speed, swing, this.log);

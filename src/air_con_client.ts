@@ -17,7 +17,8 @@ export default class AirConClient {
   public static changeSettings(mode: number, temperature: number, speed: number, swing: boolean, logs: Logging) {
     const prestring = swing ? "key_upd_" : "key_on_";
     const poststring = swing ? "_swing" : "";
-    const speedresult = speed == 1 ? "A" : speed - 1;
+    const speedinit = speed == 0 ? 1 : speed;
+    const speedresult = speedinit == 1 ? "A" : speed - 1;
 
     if (mode == 1) {
       this.sendEvent(this.device, prestring+`heat_aTmpNorm_speed${speedresult}_${temperature}`+poststring, logs);
