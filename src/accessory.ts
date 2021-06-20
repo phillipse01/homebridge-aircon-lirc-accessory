@@ -102,10 +102,7 @@ class AirConLircAccessory implements AccessoryPlugin {
         this.currentStatus = value as number;
         this.setAirconSettings(value, this.getRelevantTemp(this.currentStatus), this.currentSpeed, this.currentSwing);
         callback();
-      })
-      .setProps({
-        minValue: 1, //disable auto for now
-      });;
+      });
 
     // get current temp
     this.switchService.getCharacteristic(hap.Characteristic.CurrentTemperature)
