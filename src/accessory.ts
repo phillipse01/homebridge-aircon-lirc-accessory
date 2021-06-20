@@ -78,10 +78,10 @@ class AirConLircAccessory implements AccessoryPlugin {
           if(!this.active){
             this.setAirconSettings(value, this.getRelevantTemp(this.currentStatus), this.currentSpeed, false);
           }
-          this.active = value as boolean;
         }else {
           AirConClient.powerOff(log);
         }
+        this.active = value as boolean;
         log.info("Active SET: " + (this.active ? "ON" : "OFF"));
 
         callback();
