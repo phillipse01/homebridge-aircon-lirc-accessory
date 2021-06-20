@@ -95,7 +95,7 @@ class AirConLircAccessory implements AccessoryPlugin {
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         log.info("TargetHeaterCoolerState SET: " + (value as number));
         this.currentStatus = value as number;
-        this.setAirconSettings(value, this.currentTemperature);
+        this.setAirconSettings(value, this.currentTemperature, this.currentSpeed, this.currentSwing);
         callback();
       })
       .setProps({
@@ -122,7 +122,7 @@ class AirConLircAccessory implements AccessoryPlugin {
       })
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         log.info("HeatingThresholdTemperature SET: " + (value as number));
-        this.currentTemperature = this.setAirconSettings(hap.Characteristic.TargetHeaterCoolerState.HEAT, value as number);
+        this.currentTemperature = this.setAirconSettings(hap.Characteristic.TargetHeaterCoolerState.HEAT, value as number, this.currentSpeed, this.currentSwing);
         callback();
       })
       .setProps({
@@ -138,7 +138,7 @@ class AirConLircAccessory implements AccessoryPlugin {
       })
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         log.info("CoolingThresholdTemperature SET: " + (value as number));
-        this.currentTemperature = this.setAirconSettings(hap.Characteristic.TargetHeaterCoolerState.COOL, value as number);
+        this.currentTemperature = this.setAirconSettings(hap.Characteristic.TargetHeaterCoolerState.COOL, value as number, this.currentSpeed, this.currentSwing);
         callback();
       })
       .setProps({
@@ -155,8 +155,8 @@ class AirConLircAccessory implements AccessoryPlugin {
       })
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         log.info("SwingMode SET: " + (value as number));
-        this.currentSwing = true;
-        //this.currentTemperature = this.setAirconSettings(hap.Characteristic.TargetHeaterCoolerState.HEAT, value as number);
+        this.currentSwing = (value as boolean);
+        this.setAirconSettings(hap.Characteristic.TargetHeaterCoolerState.HEAT, this.currentTemperature, this.currentSpeed, this.currentSwing);
         callback();
       })
 
@@ -168,7 +168,8 @@ class AirConLircAccessory implements AccessoryPlugin {
       })
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         log.info("RotationSpeed SET: " + (value as number));
-        //this.currentTemperature = this.setAirconSettings(hap.Characteristic.TargetHeaterCoolerState.COOL, value as number);
+        this.currentSpeed = (value as number);
+        this.setAirconSettings(hap.Characteristic.TargetHeaterCoolerState.COOL, this.currentTemperature, value as number, this.currentSwing);
         callback();
       })
       .setProps({
@@ -185,16 +186,16 @@ class AirConLircAccessory implements AccessoryPlugin {
     log.info("AirConLircAccesory finished initializing!");
   }
 
-  private setAirconSettings(mode: any, temperature: number ): number {
+  private setAirconSettings(mode: any, temperature: number , speed: number, swing: boolean): number {
     switch (mode) {
       case hap.Characteristic.TargetHeaterCoolerState.COOL:
         if (temperature < AirConClient.MIN_COOL_VALUE || temperature > AirConClient.MAX_COOL_VALUE) {
-          return AirConClient.changeSettings(mode, temperature, this.currentSpeed, this.currentSwing, this.log);
+          return AirConClient.changeSettings(mode, temperature, speed, swing, this.log);
         }
         break;
       case hap.Characteristic.TargetHeaterCoolerState.HEAT:
         if (temperature < AirConClient.MAX_HEAT_VALUE || temperature > AirConClient.MAX_HEAT_VALUE) {
-          return AirConClient.changeSettings(mode, temperature, this.currentSpeed, this.currentSwing, this.log);
+          return AirConClient.changeSettings(mode, temperature, speed, swing, this.log);
         }
         break;
       default:

@@ -15,7 +15,7 @@ export default class AirConClient {
   public static MAX_SPEED_VALUE = 4;
 
   public static changeSettings(mode: number, temperature: number, speed: number, swing: boolean, logs: Logging) {
-    const prestring = swing ? "key_upd" : "key_on";
+    const prestring = swing ? "key_upd_" : "key_on_";
     const poststring = swing ? "_swing" : "";
     const speedresult = speed == 1 ? "A" : speed - 1;
 
