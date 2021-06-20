@@ -197,12 +197,12 @@ class AirConLircAccessory implements AccessoryPlugin {
   }
 
   private setAirconSettings(mode: any, temperature: number , speed: number, swing: boolean): number {
-    this.log.info("testcoolnum "+mode);
+    //this.log.info("testcoolnum "+mode);
     switch (mode) {
       case hap.Characteristic.TargetHeaterCoolerState.COOL:
-        this.log.info("testcoolout");
-        if (temperature < AirConClient.MIN_COOL_VALUE || temperature > AirConClient.MAX_COOL_VALUE) {
-          this.log.info("testcool");
+        //this.log.info("testcoolout");
+        if (temperature < AirConClient.MAX_COOL_VALUE || temperature > AirConClient.MIN_COOL_VALUE) {
+          //this.log.info("testcool");
           return AirConClient.changeSettings(mode, temperature, speed, swing, this.log);
         }
         break;

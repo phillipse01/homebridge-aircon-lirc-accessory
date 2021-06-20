@@ -23,7 +23,7 @@ export default class AirConClient {
     if (mode == 1) {
       this.sendEvent(this.device, prestring+`heat_aTmpNorm_speed${speedresult}_${temperature}`+poststring, logs);
     } else if (mode == 2) {
-      logs.info("testcool1");
+      //logs.info("testcool1");
       this.sendEvent(this.device, prestring+`cool_aTmpNorm_speed${speedresult}_${temperature}`+poststring, logs);
     }
     return temperature;
