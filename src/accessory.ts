@@ -74,8 +74,11 @@ class AirConLircAccessory implements AccessoryPlugin {
         callback(undefined, this.active);
       })
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
-        if (this.active = value as boolean) {
-          //AirConClient.changeTemp(this.currentStatus, this.currentTemperature, log);
+        if (value as boolean) {
+          if(!this.active){
+            this.setAirconSettings(value, this.getRelevantTemp(this.currentStatus), this.currentSpeed, false);
+          }
+          this.active = value as boolean;
         }else {
           AirConClient.powerOff(log);
         }
@@ -100,7 +103,7 @@ class AirConLircAccessory implements AccessoryPlugin {
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         log.info("TargetHeaterCoolerState SET: " + (value as number));
         this.currentStatus = value as number;
-        this.setAirconSettings(value, this.getRelevantTemp(this.currentStatus), this.currentSpeed, this.currentSwing);
+        this.setAirconSettings(value, this.getRelevantTemp(this.currentStatus), this.currentSpeed, false);
         callback();
       });
 
@@ -136,7 +139,7 @@ class AirConLircAccessory implements AccessoryPlugin {
           this.currentTemperatureHeat = (value as number);
         }
 
-        this.setAirconSettings(this.currentStatus, this.getRelevantTemp(this.currentStatus), this.currentSpeed, this.currentSwing);
+        this.setAirconSettings(this.currentStatus, this.getRelevantTemp(this.currentStatus), this.currentSpeed, false);
         callback();
       })
       .setProps({
@@ -162,7 +165,7 @@ class AirConLircAccessory implements AccessoryPlugin {
           this.currentTemperatureCool = (value as number);
         }
 
-        this.setAirconSettings(this.currentStatus, this.getRelevantTemp(this.currentStatus), this.currentSpeed, this.currentSwing);
+        this.setAirconSettings(this.currentStatus, this.getRelevantTemp(this.currentStatus), this.currentSpeed, false);
         callback();
       })
       .setProps({
@@ -180,7 +183,7 @@ class AirConLircAccessory implements AccessoryPlugin {
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         log.info("SwingMode SET: " + (value as number));
         this.currentSwing = (value as boolean);
-        this.setAirconSettings(this.currentStatus, this.getRelevantTemp(this.currentStatus), this.currentSpeed, this.currentSwing);
+        this.setAirconSettings(this.currentStatus, this.getRelevantTemp(this.currentStatus), this.currentSpeed, true);
         callback();
       })
 
@@ -193,7 +196,7 @@ class AirConLircAccessory implements AccessoryPlugin {
       .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
         log.info("RotationSpeed SET: " + (value as number));
         this.currentSpeed = (value as number);
-        this.setAirconSettings(this.currentStatus, this.getRelevantTemp(this.currentStatus), value as number, this.currentSwing);
+        this.setAirconSettings(this.currentStatus, this.getRelevantTemp(this.currentStatus), value as number, false);
         callback();
       })
       .setProps({
