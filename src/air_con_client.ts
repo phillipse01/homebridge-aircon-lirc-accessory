@@ -24,7 +24,7 @@ export default class AirConClient {
       this.sendEvent(this.device, prestring+`heat_aTmpNorm_speed${speedresult}_${temperature}`+poststring, logs);
     } else if (mode == 2) {
       this.sendEvent(this.device, prestring+`cool_aTmpNorm_speed${speedresult}_${temperature}`+poststring, logs);
-    } else if (mode == 3) {
+    } else if (mode == 0) {
       let atempVal = "Norm";
       if (!Number.isInteger(temperature)) {
         let str = temperature as unknown as string;
@@ -32,6 +32,7 @@ export default class AirConClient {
         let heat = arrstr[0] as unknown as number;
         let cool = arrstr[1] as unknown as number;
         let mid = heat + cool / 2;
+        logs.info("num "+mid);
         if (mid < 20.8) {
           atempVal = "Cold2"; }
           else if (mid < 23.6) {
@@ -43,6 +44,7 @@ export default class AirConClient {
           else if (mid <= 32) {
           atempVal = "hot2"; }
       }
+      logs.info("test "+atempVal);
 
       this.sendEvent(this.device, prestring+`auto_aTmp${atempVal}_speed${speedresult}_0`+poststring, logs);
     }
